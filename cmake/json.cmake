@@ -1,0 +1,30 @@
+# ----------------------------------------------------------------------------
+#  Detect json libraries
+# ----------------------------------------------------------------------------
+
+if(BUILD_JSON)
+    ocv_clear_vars(JSON_FOUND)
+else()
+    ocv_clear_internal_cache_vars(JSON_LIBRARY JSON_INCLUDE_DIR)
+    find_package(JSON "${MIN_VER_JSON}")
+    if(JSON_FOUND AND ANDROID)
+        if(JSON_LIBRARIES MATCHES "/usr/(lib|lib32|lib64)/libjson.so$")
+            set(JSON_LIBRARIES json)
+        endif()
+    endif()
+endif()
+
+if(NOT JSON_FOUND)
+    ocv_clear_vars(JSON_LIBRARY JSON_LIBRARIES JSON_INCLUDE_DIR)
+    message("-- set building nlohmann_json library -- ")
+    set(JSON_LIBRARY nlohmann_json CACHE INTERNAL "")
+    set(JSON_BuildTests OFF CACHE INTERNAL "")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/json")
+    set(JSON_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/json")
+    set(JSON_INCLUDE_DIR "${JSON_SOURCE_DIR}/include" CACHE INTERNAL "")
+    set(JSON_INCLUDE_DIRS ${JSON_INCLUDE_DIR})
+    set(JSON_LIBRARIES ${JSON_LIBRARY})
+    message("-- set building nlohmann_json library config finished with source_dir:${JSON_SOURCE_DIR}")
+    ocv_parse_header2(JSON "${JSON_SOURCE_DIR}/include/json.hpp" JSON_VERSION)
+    message("-- json_version:${JSON_VERSION},library:${JSON_LIBRARIES},include dir:${JSON_INCLUDE_DIR}")
+endif()
