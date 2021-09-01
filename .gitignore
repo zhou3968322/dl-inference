@@ -1,0 +1,5 @@
+cmake-build-debug
+cmake-build-debug-gpu-ci
+cmake-build-debug-gpu-test
+cmake-build-debug-docker-remote
+.idea
