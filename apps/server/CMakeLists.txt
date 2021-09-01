@@ -1,0 +1,29 @@
+message("-- building server application,source dir:${CMAKE_CURRENT_SOURCE_DIR}")
+message("-- building with ocr libraries:${OCR_LIBRARIES}")
+message("-- building with boost include dirs:${Boost_INCLUDE_DIRS}")
+include_directories(include ${OCR_INCLUDE_DIRS})
+set(SERVER_EXECUTABLE ocr_server CACHE INTERNAL "")
+file(GLOB SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+file(GLOB HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
+
+include_directories(include ${DL_CORE_INCLUDE_DIRS} ${TEXT_DETECTION_INCLUDE_DIRS} ${TEXT_RECOGNITION_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+add_executable(ocr_server ${SOURCE_FILES})
+target_link_libraries(ocr_server ${OCR_LIBRARIES} ${TORCH_LIBRARIES} ${DL_CORE_LIBRARY} ${OPENCV_LIBRARIES}
+        ${JSON_LIBRARIES} ${TEXT_RECOGNITION_LIBRARY} ${TEXT_DETECTION_LIBRARY} ${Boost_LIBRARIES})
+
+#target_compile_definitions(${TEXT_RECOGNITION_LIBRARY} PRIVATE _GLIBCXX_USE_CXX11_ABI=0)
+set_property(TARGET ocr_server PROPERTY CXX_STANDARD 17)
+
+install(FILES ${HEADER_FILES}
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include COMPONENT dev)
+install(TARGETS ${SERVER_EXECUTABLE}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+
+set(SERVER_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+set(SERVER_INCLUDE_DIR "${SERVER_SOURCE_DIR}/include" CACHE INTERNAL "")
+set(SERVER_INCLUDE_DIRS ${SERVER_INCLUDE_DIR} PARENT_SCOPE)
+set(SERVER_EXECUTABLES ${SERVER_EXECUTABLE} PARENT_SCOPE)
+
+
+
+message("-- ocr config with library name:${OCR_LIBRARY}")
